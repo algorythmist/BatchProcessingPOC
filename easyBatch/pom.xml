@@ -44,7 +44,11 @@
 			<artifactId>easybatch-quartz</artifactId>
 			<version>${easybatch.version}</version>
 		</dependency>
-	
+		<dependency>
+			<groupId>org.easybatch</groupId>
+			<artifactId>easybatch-tools</artifactId>
+			<version>${easybatch.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
