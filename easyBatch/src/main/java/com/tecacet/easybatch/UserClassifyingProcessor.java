@@ -14,6 +14,7 @@ public class UserClassifyingProcessor implements ComputationalRecordProcessor<Us
     
     @Override
     public User processRecord(User user) throws RecordProcessingException {
+        
         String occupation = user.getOccupation();
         Integer count = occupationCounts.get(occupation);
         if (count == null) {

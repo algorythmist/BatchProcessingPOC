@@ -40,6 +40,19 @@
 			<version>${easybatch.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.easybatch</groupId>
+			<artifactId>easybatch-quartz</artifactId>
+			<version>${easybatch.version}</version>
+		</dependency>
+	
+
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>1.7.0</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>

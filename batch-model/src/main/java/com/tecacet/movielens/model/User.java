@@ -55,4 +55,8 @@ public class User {
         this.zipCode = zipCode;
     }
 
+    @Override
+    public String toString() {
+        return Long.toString(id);
+    }
 }
