@@ -21,9 +21,11 @@ public class UserLoadingJob {
         Engine engine = new EngineBuilder().reader(new FlatFileRecordReader(new File(USER_FILENAME)))
                 .mapper(recordMapper)
                 .validator(new BeanValidationRecordValidator<User>())
+                 .processor(new UserClassifyingProcessor())
+                 .recordProcessorEventListener(new LoggingEventListener())
                 .build();
         Report report = engine.call();
-        System.out.println(report);
+        System.out.println(report.getBatchResult());
         
     }
 }
