@@ -3,12 +3,12 @@ package com.tecacet.easybatch;
 import org.easybatch.core.api.RecordProcessor;
 import org.elasticsearch.client.Client;
 
-public class UserIndexer implements RecordProcessor<String, String> {
+public class UserIndexerProcessor implements RecordProcessor<String, String> {
 
     /** Elastic search client */
     private Client client;
 
-    public UserIndexer(Client client) {
+    public UserIndexerProcessor(Client client) {
         this.client = client;
     }
 

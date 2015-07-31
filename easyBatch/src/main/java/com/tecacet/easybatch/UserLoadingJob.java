@@ -34,7 +34,7 @@ public class UserLoadingJob {
                 .validator(new BeanValidationRecordValidator<User>())
                  .processor(new UserClassifyingProcessor())
                  .processor(new JsonTransformingProcessor())
-                 .processor(new UserIndexer(client))
+                 .processor(new UserIndexerProcessor(client))
                  .recordProcessorEventListener(new LoggingEventListener())
                 .build();
         Report report = engine.call();
