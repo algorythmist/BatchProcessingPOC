@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
@@ -15,22 +16,26 @@ import com.mongodb.MongoClient;
 @EnableMongoRepositories
 public class MongoConfig extends AbstractMongoConfiguration {
 
-	@Override
-	public String getDatabaseName() {
-		return "movielens";
-	}
+    @Override
+    public String getDatabaseName() {
+        return "movielens";
+    }
 
-	@Override
-	@Bean
-	public Mongo mongo() throws Exception {
-		return new MongoClient("127.0.0.1");
-	}
+    @Override
+    @Bean
+    public Mongo mongo() throws Exception {
+        return new MongoClient("127.0.0.1");
+    }
 
-	@Bean(name = "validator")
+    @Bean
+    public MongoTemplate mongoTemplate(Mongo mongo) throws Exception {
+        return new MongoTemplate(mongo, getDatabaseName());
+    }
+
+    @Bean(name = "validator")
     public LocalValidatorFactoryBean localValidatorFactoryBean() {
         return new LocalValidatorFactoryBean();
 
     }
 
-	
 }
