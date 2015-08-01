@@ -10,6 +10,7 @@
 	<modules>
 		<module>easyBatch</module>
 		<module>batch-model</module>
+		<module>spring-batch</module>
 	</modules>
 
 	<properties>
