@@ -1,4 +1,4 @@
-package com.tecacet.easybatch;
+package com.tecacet.movielens.easybatch;
 
 import java.io.IOException;
 

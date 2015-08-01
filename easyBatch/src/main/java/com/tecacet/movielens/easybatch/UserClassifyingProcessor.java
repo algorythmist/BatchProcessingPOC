@@ -1,4 +1,4 @@
-package com.tecacet.easybatch;
+package com.tecacet.movielens.easybatch;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,16 +6,17 @@ import java.util.Map;
 import org.easybatch.core.api.ComputationalRecordProcessor;
 import org.easybatch.core.api.RecordProcessingException;
 
+import com.tecacet.movielens.model.Occupation;
 import com.tecacet.movielens.model.User;
 
-public class UserClassifyingProcessor implements ComputationalRecordProcessor<User, User, Map<String,Integer>>{
+public class UserClassifyingProcessor implements ComputationalRecordProcessor<User, User, Map<Occupation,Integer>>{
 
-    private Map<String,Integer> occupationCounts = new HashMap<>();
+    private Map<Occupation,Integer> occupationCounts = new HashMap<>();
     
     @Override
     public User processRecord(User user) throws RecordProcessingException {
         
-        String occupation = user.getOccupation();
+        Occupation occupation = user.getOccupation();
         Integer count = occupationCounts.get(occupation);
         if (count == null) {
             occupationCounts.put(occupation, 1);
@@ -26,7 +27,7 @@ public class UserClassifyingProcessor implements ComputationalRecordProcessor<Us
     }
 
     @Override
-    public Map<String, Integer> getComputationResult() {
+    public Map<Occupation, Integer> getComputationResult() {
         return occupationCounts;
     }
 

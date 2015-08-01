@@ -1,4 +1,4 @@
-package com.tecacet.easybatch.converter;
+package com.tecacet.movielens.easybathc.converter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -14,7 +14,7 @@ public class LocalDateTypeConverter implements TypeConverter<LocalDate>{
         if (dateString == null || dateString.isEmpty()) {
             return null;
         }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMM-yyyy");
         return  LocalDate.parse(dateString, formatter);
     }
 

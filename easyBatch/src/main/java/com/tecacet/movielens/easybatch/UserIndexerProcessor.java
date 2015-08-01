@@ -1,4 +1,4 @@
-package com.tecacet.easybatch;
+package com.tecacet.movielens.easybatch;
 
 import org.easybatch.core.api.RecordProcessor;
 import org.elasticsearch.client.Client;

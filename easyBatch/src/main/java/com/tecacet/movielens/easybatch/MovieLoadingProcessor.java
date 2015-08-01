@@ -1,25 +1,27 @@
-package com.tecacet.easybatch;
+package com.tecacet.movielens.easybatch;
 
 import org.easybatch.core.api.RecordProcessingException;
 import org.easybatch.core.api.RecordProcessor;
-import org.jongo.Jongo;
-import org.jongo.MongoCollection;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import com.mongodb.DB;
-import com.mongodb.MongoClient;
 import com.tecacet.movielens.model.Movie;
+import com.tecacet.movielens.repository.MovieRepository;
 
-public class MovieProcessor implements RecordProcessor<Movie, Movie> {
+@Component
+public class MovieLoadingProcessor implements RecordProcessor<Movie, Movie> {
 
-    private final MongoClient mongoClient = new MongoClient();
+    private final MovieRepository movieRepository;
+
+    @Autowired
+    public MovieLoadingProcessor(MovieRepository movieRepository) {
+        super();
+        this.movieRepository = movieRepository;
+    }
 
     @Override
     public Movie processRecord(Movie movie) throws RecordProcessingException {
-        //MongoDatabase database = mongoClient.getDatabase( "movielens" );
-        DB database = mongoClient.getDB("movielens");
-        Jongo jongo = new Jongo(database);
-        MongoCollection friends = jongo.getCollection("movies");
-        friends.save(movie);
+        movieRepository.save(movie);
         return movie;
     }
 
