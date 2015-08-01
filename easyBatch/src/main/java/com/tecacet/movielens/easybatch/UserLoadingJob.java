@@ -43,7 +43,7 @@ public class UserLoadingJob {
     private Engine buildEngine() throws FileNotFoundException {
         DelimitedRecordMapper<User> recordMapper = new DelimitedRecordMapper<User>(User.class, new String[] { "id", "age", "gender", "occupation",
                 "zipCode" });
-        recordMapper.setDelimiter(",");
+        recordMapper.setDelimiter("|");
         recordMapper.registerTypeConverter(new GenderTypeConverter());
         recordMapper.registerTypeConverter(new OccupationTypeConverter());
         Engine engine = new EngineBuilder().enableJMX(true).reader(new FlatFileRecordReader(new File(USER_FILENAME))).mapper(recordMapper)
