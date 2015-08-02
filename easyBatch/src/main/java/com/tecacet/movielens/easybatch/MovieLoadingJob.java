@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import org.easybatch.core.api.Engine;
+import org.easybatch.core.api.Record;
+import org.easybatch.core.api.RecordMapper;
+import org.easybatch.core.api.RecordMappingException;
 import org.easybatch.core.api.Report;
 import org.easybatch.core.impl.EngineBuilder;
 import org.easybatch.flatfile.DelimitedRecordMapper;
@@ -26,6 +29,31 @@ public class MovieLoadingJob {
 
     private final MovieLoadingProcessor movieProcessor;
 
+    class DelegatingRecordMapper implements RecordMapper<Movie> {
+
+        private DelimitedRecordMapper<Movie> recordMapper = new DelimitedRecordMapper<Movie>(Movie.class, new Integer[] { 0, 1, 2, 3, 4 },
+                new String[] { "id", "title", "releaseDate", "videoReleaseDate", "IMDBurl" });
+
+        public DelegatingRecordMapper() {
+            recordMapper.setDelimiter("|");
+            recordMapper.registerTypeConverter(new LocalDateTypeConverter());
+        }
+
+        @Override
+        public Movie mapRecord(Record record) throws RecordMappingException {
+            Movie movie = recordMapper.mapRecord(record);
+            String[] tokens = ((String) record.getPayload()).split("\\|");
+            for (int i = 5; i < 24; i++) {
+                int index = Integer.parseInt(tokens[i]);
+                if (index == 1) {
+                    movie.addGenre(i-5);
+                }
+            }
+            return movie;
+        }
+
+    }
+
     @Autowired
     public MovieLoadingJob(MovieLoadingProcessor movieProcessor) {
         super();
@@ -38,10 +66,8 @@ public class MovieLoadingJob {
     }
 
     private Engine buildEngine() throws FileNotFoundException {
-        DelimitedRecordMapper<Movie> recordMapper = new DelimitedRecordMapper<Movie>(Movie.class, new Integer[] { 0, 1, 2, 3, 4 }, new String[] {
-                "id", "title", "releaseDate", "videoReleaseDate", "IMDBurl" });
-        recordMapper.setDelimiter("|");
-        recordMapper.registerTypeConverter(new LocalDateTypeConverter());
+
+        RecordMapper<Movie> recordMapper = new DelegatingRecordMapper();
         Engine engine = new EngineBuilder().enableJMX(true).reader(new FlatFileRecordReader(new File(MOVIE_FILENAME))).mapper(recordMapper)
                 .validator(new BeanValidationRecordValidator<Movie>()).processor(movieProcessor).build();
         return engine;
@@ -51,7 +77,6 @@ public class MovieLoadingJob {
         ApplicationContext context = new AnnotationConfigApplicationContext(MongoConfig.class, SpringConfig.class);
         MovieLoadingJob job = context.getBean(MovieLoadingJob.class);
         job.readMovies();
-        
 
     }
 }

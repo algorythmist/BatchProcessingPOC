@@ -1,6 +1,8 @@
 package com.tecacet.movielens.model;
 
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
@@ -11,6 +13,29 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "movies")
 public class Movie {
 
+    public static final String[] GENRES = {
+            "unknown",
+            "Action",
+            "Adventure",
+            "Animation",
+            "Children's",
+            "Comedy",
+            "Crime",
+            "Documentary",
+            "Drama",
+            "Fantasy",
+            "Film-Noir",
+            "Horror",
+            "Musical",
+            "Mystery",
+            "Romance",
+            "Sci-Fi",
+            "Thriller",
+            "War",
+            "Western"
+
+    };
+    
     @Id
     private long id;
     
@@ -23,6 +48,8 @@ public class Movie {
     private LocalDate videoReleaseDate;
     
     private String IMDBurl;
+    
+    private Set<Integer> genres = new LinkedHashSet<>();
 
     public long getId() {
         return id;
@@ -63,5 +90,19 @@ public class Movie {
     public void setIMDBurl(String iMDBurl) {
         IMDBurl = iMDBurl;
     }
+
+    public Set<Integer> getGenres() {
+        return genres;
+    }
+
+    public void addGenre(int genreIndex) {
+        this.genres.add(genreIndex);
+    }
+
+    public void setGenres(Set<Integer> genres) {
+        this.genres = genres;
+    }
+    
+    
 
 }
