@@ -32,7 +32,7 @@ public class UserIndexingJob {
         .reader(new FlatFileRecordReader(new File(USER_FILENAME)))
                 .mapper(recordMapper)
                 .validator(new BeanValidationRecordValidator<User>())
-                 .processor(new UserClassifyingProcessor())
+                 .processor(new MovieRatingProcessor())
                  .processor(new JsonTransformingProcessor())
                  .processor(new UserIndexerProcessor(client))
                  .recordProcessorEventListener(new LoggingEventListener())

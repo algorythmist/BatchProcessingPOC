@@ -44,7 +44,13 @@
 			<artifactId>easybatch-tools</artifactId>
 			<version>${easybatch.version}</version>
 		</dependency>
-
+		<!--  
+		<dependency>
+			<groupId>org.easybatch</groupId>
+			<artifactId>easybatch-mongodb</artifactId>
+			<version>${easybatch.version}</version>
+		</dependency>
+		-->
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>

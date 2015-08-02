@@ -87,7 +87,7 @@ public class ParallelTutorialWithRecordDispatching {
                 .reader(new QueueRecordReader(queue))
                 .mapper(recordMapper)
                 .validator(new BeanValidationRecordValidator<User>())
-                .filter(new PoisonRecordFilter()).processor(new UserClassifyingProcessor())
+                .filter(new PoisonRecordFilter()).processor(new MovieRatingProcessor())
                 .build();
     }
 

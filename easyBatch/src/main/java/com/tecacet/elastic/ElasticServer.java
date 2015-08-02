@@ -21,7 +21,7 @@ public class ElasticServer {
         node.close();
         deleteElasticSearchDataDirectory();
     }
-
+    
     private void deleteElasticSearchDataDirectory() throws IOException {
         new File(ES_DATA_DIRECTORY).delete();
     }
