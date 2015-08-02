@@ -13,12 +13,8 @@ import org.easybatch.flatfile.DelimitedRecordMapper;
 import org.easybatch.flatfile.FlatFileRecordReader;
 import org.easybatch.validation.BeanValidationRecordValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.tecacet.movielens.MongoConfig;
-import com.tecacet.movielens.SpringConfig;
 import com.tecacet.movielens.easybathc.converter.LocalDateTypeConverter;
 import com.tecacet.movielens.model.Movie;
 
@@ -39,6 +35,7 @@ public class MovieLoadingJob {
             recordMapper.registerTypeConverter(new LocalDateTypeConverter());
         }
 
+        @SuppressWarnings("rawtypes")
         @Override
         public Movie mapRecord(Record record) throws RecordMappingException {
             Movie movie = recordMapper.mapRecord(record);
@@ -73,10 +70,5 @@ public class MovieLoadingJob {
         return engine;
     }
 
-    public static void main(String[] args) throws Exception {
-        ApplicationContext context = new AnnotationConfigApplicationContext(MongoConfig.class, SpringConfig.class);
-        MovieLoadingJob job = context.getBean(MovieLoadingJob.class);
-        job.readMovies();
-
-    }
+ 
 }

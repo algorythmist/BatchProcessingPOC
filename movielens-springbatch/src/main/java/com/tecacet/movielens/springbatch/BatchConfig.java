@@ -17,18 +17,20 @@ import org.springframework.batch.item.support.PassThroughItemProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.tecacet.movielens.model.Movie;
 import com.tecacet.movielens.model.User;
 import com.tecacet.movielens.model.UserRating;
+import com.tecacet.movielens.repository.MovieRepository;
 import com.tecacet.movielens.repository.UserRatingRepository;
 import com.tecacet.movielens.repository.UserRepository;
 
 @Configuration
 @EnableBatchProcessing
-public class BatchConfiguration {
+public class BatchConfig {
 
 	@Bean
 	public JobRepository jobRepository() throws Exception {
-		return new MapJobRepositoryFactoryBean().getJobRepository();
+		return new MapJobRepositoryFactoryBean().getObject();
 	}
 
 	@Bean
@@ -54,6 +56,14 @@ public class BatchConfiguration {
 	}
 	
 	@Bean
+    public ItemWriter<Movie> movieWritter(MovieRepository repository) {
+        RepositoryItemWriter<Movie> itemWriter = new RepositoryItemWriter<>();
+        itemWriter.setRepository(repository);
+        itemWriter.setMethodName("save");
+        return itemWriter;
+    }
+	
+	@Bean
 	public ItemWriter<UserRating> ratingWritter(UserRatingRepository repository) {
 		RepositoryItemWriter<UserRating> itemWriter = new RepositoryItemWriter<>();
 		itemWriter.setRepository(repository);
@@ -61,19 +71,7 @@ public class BatchConfiguration {
 		return itemWriter;
 	}
 
-	@Bean
-	public Job importUserJob(JobBuilderFactory jobs, Step importUserStep) {
-		return jobs.get("importUserJob").incrementer(new RunIdIncrementer())
-				//.listener(listener)
-				.flow(importUserStep).end().build();
-	}
-
-	@Bean
-	public Job importRatingsJob(JobBuilderFactory jobs, Step importRatingStep) {
-		return jobs.get("importRatingsJob").incrementer(new RunIdIncrementer())
-				//.listener(listener)
-				.flow(importRatingStep).end().build();
-	}
+	
 	
 	@Bean(name="importUserStep")
 	public Step importUserStep(StepBuilderFactory stepBuilderFactory,
@@ -83,6 +81,14 @@ public class BatchConfiguration {
 				.reader(reader).processor(processor).writer(writer).build();
 	}
 	
+	@Bean(name="importMovieStep")
+    public Step importMovieStep(StepBuilderFactory stepBuilderFactory,
+            MovieItemReader reader, ItemWriter<Movie> writer,
+            ItemProcessor<Movie, Movie> processor) {
+        return stepBuilderFactory.get("importMovieStep").<Movie, Movie> chunk(10)
+                .reader(reader).processor(processor).writer(writer).build();
+    }
+	
 	@Bean(name="importRatingStep")
 	public Step importRatingStep(StepBuilderFactory stepBuilderFactory,
 			RatingItemReader reader, ItemWriter<UserRating> writer,
@@ -90,5 +96,26 @@ public class BatchConfiguration {
 		return stepBuilderFactory.get("importRatingStep").<UserRating, UserRating> chunk(100)
 				.reader(reader).processor(processor).writer(writer).build();
 	}
+	
+	@Bean
+    public Job importUserJob(JobBuilderFactory jobs, Step importUserStep) {
+        return jobs.get("importUserJob").incrementer(new RunIdIncrementer())
+                //.listener(listener)
+                .flow(importUserStep).end().build();
+    }
+	
+	@Bean
+    public Job importMovieJob(JobBuilderFactory jobs, Step importUserStep) {
+        return jobs.get("importMovieJob").incrementer(new RunIdIncrementer())
+                //.listener(listener)
+                .flow(importUserStep).end().build();
+    }
+
+    @Bean
+    public Job importRatingsJob(JobBuilderFactory jobs, Step importRatingStep) {
+        return jobs.get("importRatingsJob").incrementer(new RunIdIncrementer())
+                //.listener(listener)
+                .flow(importRatingStep).end().build();
+    }
 
 }

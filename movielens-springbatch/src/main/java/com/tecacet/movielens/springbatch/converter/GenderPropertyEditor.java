@@ -6,7 +6,6 @@ import com.tecacet.movielens.model.Gender;
 
 
 public class GenderPropertyEditor extends PropertyEditorSupport {
-
 	
 	@Override
 	public void setAsText(String string) throws IllegalArgumentException {

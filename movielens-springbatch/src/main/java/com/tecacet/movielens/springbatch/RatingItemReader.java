@@ -4,7 +4,6 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
-import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.item.file.transform.RegexLineTokenizer;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Component;
@@ -15,18 +14,17 @@ import com.tecacet.movielens.model.UserRating;
 @StepScope
 public class RatingItemReader extends FlatFileItemReader<UserRating> {
 
-	public RatingItemReader() {
-//		Map<Class<?>, PropertyEditor> customEditors = new HashMap<>();
-//		customEditors.put(Gender.class, new GenderPropertyEditor());
-//		customEditors.put(Occupation.class, new OccupationPropertyEditor());
+	private static final String RATINGS_FILENAME = "../ml-100k/u.data";
+    private static final String[] FIELDS = new String[] { "usedId", "itemId", "rating", "timestamp"};
 
+    public RatingItemReader() {
 		RegexLineTokenizer lineTokenizer = new RegexLineTokenizer() {
 			{
 				setRegex("(.*)\\s+(.*)\\s+(.*)\\s+(.*)\\b");
-				setNames(new String[] { "usedId", "itemId", "rating", "timestamp"});
+				setNames(FIELDS);
 			}
 		};
-		setResource(new FileSystemResource("../ml-100k/u.data"));
+		setResource(new FileSystemResource(RATINGS_FILENAME));
 		setLineMapper(new DefaultLineMapper<UserRating>() {
 			{
 				

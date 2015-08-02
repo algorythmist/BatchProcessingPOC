@@ -20,7 +20,7 @@ public class UserIndexingJob {
     
     private final ElasticServer elasticServer = new ElasticServer();
     
-    public void indexUsers() throws Exception {
+    public Report indexUsers() throws Exception {
         //start embedded elastic search node
         Node node = elasticServer.startEmbeddedNode();
         Client client = node.client();
@@ -41,6 +41,7 @@ public class UserIndexingJob {
         
         //shutdown elastic search node
         elasticServer.stopEmbeddedNode(node);
+        return report;
     }
     
     public static void main(String[] args) throws Exception {

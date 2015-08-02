@@ -22,18 +22,21 @@ import com.tecacet.movielens.springbatch.converter.OccupationPropertyEditor;
 @StepScope
 public class UserItemReader extends FlatFileItemReader<User> {
 
-	public UserItemReader() {
+	private static final String USER_FILENAME = "../ml-100k/u.user";
+    private static final String[] FIELDS = new String[] { "id", "age", "gender", "occupation",
+    		"zipCode" };
+
+    public UserItemReader() {
 		Map<Class<?>, PropertyEditor> customEditors = new HashMap<>();
 		customEditors.put(Gender.class, new GenderPropertyEditor());
 		customEditors.put(Occupation.class, new OccupationPropertyEditor());
 		
 		DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer("|") {
 			{
-				setNames(new String[] { "id", "age", "gender", "occupation",
-						"zipCode" });
+				setNames(FIELDS);
 			}
 		};
-		setResource(new FileSystemResource("../ml-100k/u.user"));
+		setResource(new FileSystemResource(USER_FILENAME));
 		setLineMapper(new DefaultLineMapper<User>() {
 			{
 				
