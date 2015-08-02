@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.tecacet</groupId>
-		<artifactId>batchPOC</artifactId>
+		<artifactId>movielens-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>batch-model</artifactId>
+	<artifactId>movielens-mongodb</artifactId>
 	<packaging>jar</packaging>
 
 	<properties>
