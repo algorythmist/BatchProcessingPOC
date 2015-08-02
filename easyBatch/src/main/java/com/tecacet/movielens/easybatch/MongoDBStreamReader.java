@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.tecacet.movielens.model.UserRating;
 import com.tecacet.movielens.repository.UserRatingRepository;
 
+//TODO make generic
 public class MongoDBStreamReader implements RecordReader {
 
     private final UserRatingRepository repository;

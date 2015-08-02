@@ -32,10 +32,9 @@ public class MovieLoadingJob {
         this.movieProcessor = movieProcessor;
     }
 
-    public <T> void readMovies() throws Exception {
+    public Report readMovies() throws Exception {
         Engine engine = buildEngine();
-        Report report = engine.call();
-
+        return engine.call();
     }
 
     private Engine buildEngine() throws FileNotFoundException {
@@ -52,6 +51,7 @@ public class MovieLoadingJob {
         ApplicationContext context = new AnnotationConfigApplicationContext(MongoConfig.class, SpringConfig.class);
         MovieLoadingJob job = context.getBean(MovieLoadingJob.class);
         job.readMovies();
+        
 
     }
 }
