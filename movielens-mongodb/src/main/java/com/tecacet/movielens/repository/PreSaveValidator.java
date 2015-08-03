@@ -16,7 +16,6 @@ import com.mongodb.DBObject;
 @Component
 public class PreSaveValidator<T> extends AbstractMongoEventListener<T>{
 
-
     private final Validator validator;
 
     @Autowired
