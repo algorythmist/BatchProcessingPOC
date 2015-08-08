@@ -22,8 +22,6 @@ public class RatingLoadingJob {
     private static final String RATING_FILENAME = "../ml-100k/u.data";
 
     private final RatingLoadingProcessor ratingLoadingProcessor;
-
-   
     
     @Autowired
     public RatingLoadingJob(RatingLoadingProcessor ratingLoadingProcessor) {
@@ -38,15 +36,20 @@ public class RatingLoadingJob {
     }
   
     private Engine buildEngine() throws FileNotFoundException {
-        DelimitedRecordMapper<UserRating> recordMapper = new DelimitedRecordMapper<UserRating>(UserRating.class,
-                new String[] { "userId", "itemId", "rating", "timestamp"});
-        recordMapper.setDelimiter("\\s");
-        recordMapper.registerTypeConverter(new GenderTypeConverter());
-        recordMapper.registerTypeConverter(new OccupationTypeConverter());
+        DelimitedRecordMapper<UserRating> recordMapper = getRatingRecordMapper();
         Engine engine = new EngineBuilder().enableJMX(true).reader(new FlatFileRecordReader(new File(RATING_FILENAME))).mapper(recordMapper)
                 .validator(new BeanValidationRecordValidator<UserRating>()).processor(ratingLoadingProcessor).build();
         return engine;
     }
+
+	public static DelimitedRecordMapper<UserRating> getRatingRecordMapper() {
+		DelimitedRecordMapper<UserRating> recordMapper = new DelimitedRecordMapper<UserRating>(UserRating.class,
+                new String[] { "userId", "itemId", "rating", "timestamp"});
+        recordMapper.setDelimiter("\\s");
+        recordMapper.registerTypeConverter(new GenderTypeConverter());
+        recordMapper.registerTypeConverter(new OccupationTypeConverter());
+		return recordMapper;
+	}
 
  
 }

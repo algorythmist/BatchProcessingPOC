@@ -1,4 +1,4 @@
-package com.tecacet.elastic;
+package com.tecacet.movielens.elastic;
 
 import java.io.File;
 import java.io.IOException;

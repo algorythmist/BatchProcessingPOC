@@ -11,7 +11,7 @@ import org.easybatch.validation.BeanValidationRecordValidator;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.node.Node;
 
-import com.tecacet.elastic.ElasticServer;
+import com.tecacet.movielens.elastic.ElasticServer;
 import com.tecacet.movielens.model.User;
 
 public class UserIndexingJob {
