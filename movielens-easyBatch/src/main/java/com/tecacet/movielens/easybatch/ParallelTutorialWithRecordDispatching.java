@@ -9,18 +9,18 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.easybatch.core.api.Engine;
-import org.easybatch.core.api.Record;
-import org.easybatch.core.api.Report;
+import org.easybatch.core.job.Job;
+import org.easybatch.core.job.JobReport;
+import org.easybatch.core.job.JobBuilder;
+import org.easybatch.core.record.Record;
 import org.easybatch.core.dispatcher.PoisonRecordBroadcaster;
 import org.easybatch.core.dispatcher.RoundRobinRecordDispatcher;
 import org.easybatch.core.filter.PoisonRecordFilter;
-import org.easybatch.core.impl.EngineBuilder;
-import org.easybatch.core.reader.QueueRecordReader;
+import org.easybatch.core.reader.BlockingQueueRecordReader;
 import org.easybatch.flatfile.DelimitedRecordMapper;
 import org.easybatch.flatfile.FlatFileRecordReader;
-import org.easybatch.tools.reporting.DefaultReportMerger;
-import org.easybatch.tools.reporting.ReportMerger;
+import org.easybatch.tools.reporting.DefaultJobReportMerger;
+import org.easybatch.tools.reporting.JobReportMerger;
 import org.easybatch.validation.BeanValidationRecordValidator;
 
 import com.tecacet.movielens.model.User;
@@ -31,7 +31,7 @@ public class ParallelTutorialWithRecordDispatching {
 	private static final String DATA_FILENAME = "../ml-100k/u.data";
 	private static final int THREAD_POOL_SIZE = 4;
 
-	static DelimitedRecordMapper<UserRating> recordMapper = RatingLoadingJob
+	static DelimitedRecordMapper recordMapper = RatingLoadingJob
 			.getRatingRecordMapper();
 
 	public static void main(String[] args) throws Exception {
@@ -39,41 +39,41 @@ public class ParallelTutorialWithRecordDispatching {
 		File userFile = new File(DATA_FILENAME);
 
 		// Create queues
-		BlockingQueue<Record> queue1 = new LinkedBlockingQueue<Record>();
-		BlockingQueue<Record> queue2 = new LinkedBlockingQueue<Record>();
+		BlockingQueue<Record> queue1 = new LinkedBlockingQueue<>();
+		BlockingQueue<Record> queue2 = new LinkedBlockingQueue<>();
 
 		// Create a round robin record dispatcher
-		RoundRobinRecordDispatcher roundRobinRecordDispatcher = new RoundRobinRecordDispatcher(
+		RoundRobinRecordDispatcher roundRobinRecordDispatcher = new RoundRobinRecordDispatcher<>(
 				Arrays.asList(queue1, queue2));
 
-		// Build a master engine that will read records from the data source
-		// and dispatch them to worker engines
-		Engine masterEngine = EngineBuilder
-				.aNewEngine()
+		// Build a master job that will read records from the data source
+		// and dispatch them to workers
+		Job masterJob = JobBuilder
+				.aNewJob()
 				.named("master-engine")
 				.reader(new FlatFileRecordReader(userFile))
 				.processor(roundRobinRecordDispatcher)
-				.jobEventListener(
-						new PoisonRecordBroadcaster(roundRobinRecordDispatcher))
+				.jobListener(
+						new PoisonRecordBroadcaster<>(Arrays.asList(queue1, queue2)))
 				.build();
 
 		// Build worker engines
-		Engine workerEngine1 = buildWorkerEngine(queue1, "worker-engine1");
-		Engine workerEngine2 = buildWorkerEngine(queue2, "worker-engine2");
+		Job workerJob1 = buildWorkerJob(queue1, "worker-job1");
+		Job workerJob2 = buildWorkerJob(queue2, "worker-job2");
 
-		// Create a thread pool to call master and worker engines in parallel
+		// Create a thread pool to call master and worker jobs in parallel
 		ExecutorService executorService = Executors
 				.newFixedThreadPool(THREAD_POOL_SIZE);
 
 		// Submit workers to executor service
-		List<Future<Report>> partialReports = executorService.invokeAll(Arrays
-				.asList(masterEngine, workerEngine1, workerEngine2));
+		List<Future<JobReport>> partialReports = executorService.invokeAll(Arrays
+				.asList(masterJob, workerJob1, workerJob2));
 		// merge partial reports into a global one
-		Report report1 = partialReports.get(0).get();
-		Report report2 = partialReports.get(1).get();
+		JobReport report1 = partialReports.get(0).get();
+		JobReport report2 = partialReports.get(1).get();
 
-		ReportMerger reportMerger = new DefaultReportMerger();
-		Report finalReport = reportMerger.mergerReports(report1, report2);
+		JobReportMerger reportMerger = new DefaultJobReportMerger();
+		JobReport finalReport = reportMerger.mergerReports(report1, report2);
 		System.out.println(finalReport);
 
 		// Shutdown executor service
@@ -81,10 +81,10 @@ public class ParallelTutorialWithRecordDispatching {
 
 	}
 
-	private static Engine buildWorkerEngine(BlockingQueue<Record> queue,
-			String engineName) {
-		return EngineBuilder.aNewEngine().named(engineName)
-				.reader(new QueueRecordReader(queue)).mapper(recordMapper)
+	private static Job buildWorkerJob(BlockingQueue<Record> queue,
+			String jobName) {
+		return JobBuilder.aNewJob().named(jobName)
+				.reader(new BlockingQueueRecordReader<>(queue)).mapper(recordMapper)
 				.validator(new BeanValidationRecordValidator<User>())
 				.filter(new PoisonRecordFilter())
 				.processor(new MovieRatingProcessor()).build();

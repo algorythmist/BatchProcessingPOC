@@ -3,9 +3,9 @@ package com.tecacet.movielens.easybathc.converter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import org.easybatch.core.api.TypeConverter;
+import org.easybatch.core.converter.TypeConverter;
 
-public class LocalDateTypeConverter implements TypeConverter<LocalDate>{
+public class LocalDateTypeConverter implements TypeConverter<String, LocalDate>{
 
     //01-Jan-1995
     

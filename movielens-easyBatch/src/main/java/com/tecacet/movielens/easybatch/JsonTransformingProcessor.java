@@ -2,23 +2,26 @@ package com.tecacet.movielens.easybatch;
 
 import java.io.IOException;
 
-import org.easybatch.core.api.RecordProcessingException;
-import org.easybatch.core.api.RecordProcessor;
+import org.easybatch.core.processor.RecordProcessingException;
+import org.easybatch.core.processor.RecordProcessor;
+import org.easybatch.core.record.Record;
+import org.easybatch.core.record.StringRecord;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
 import com.tecacet.movielens.model.User;
 
-public class JsonTransformingProcessor implements RecordProcessor<User, String> {
+public class JsonTransformingProcessor implements RecordProcessor<Record<User>, StringRecord> {
 
     @Override
-    public String processRecord(User user) throws RecordProcessingException {
+    public StringRecord processRecord(Record<User> record) throws RecordProcessingException {
 
+        User user = record.getPayload();
         XContentBuilder builder;
         try {
             builder = XContentFactory.jsonBuilder().startObject().field("id", user.getId()).field("age", user.getAge())
                     .field("gender", user.getGender()).endObject();
-            return builder.string();
+            return new StringRecord(record.getHeader(), builder.string());
         } catch (IOException e) {
             throw new RecordProcessingException("Failed to map record", e);
         }

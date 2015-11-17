@@ -3,9 +3,9 @@ package com.tecacet.movielens.easybatch;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import org.easybatch.core.api.Engine;
-import org.easybatch.core.api.Report;
-import org.easybatch.core.impl.EngineBuilder;
+import org.easybatch.core.job.Job;
+import org.easybatch.core.job.JobReport;
+import org.easybatch.core.job.JobBuilder;
 import org.easybatch.flatfile.DelimitedRecordMapper;
 import org.easybatch.flatfile.FlatFileRecordReader;
 import org.easybatch.validation.BeanValidationRecordValidator;
@@ -29,22 +29,21 @@ public class RatingLoadingJob {
         this.ratingLoadingProcessor = ratingLoadingProcessor;
     }
 
-    public Report readRatings() throws Exception {
-        Engine engine = buildEngine();
-        return engine.call();
+    public JobReport readRatings() throws Exception {
+        Job job = buildJob();
+        return job.call();
 
     }
   
-    private Engine buildEngine() throws FileNotFoundException {
-        DelimitedRecordMapper<UserRating> recordMapper = getRatingRecordMapper();
-        Engine engine = new EngineBuilder().enableJMX(true).reader(new FlatFileRecordReader(new File(RATING_FILENAME))).mapper(recordMapper)
+    private Job buildJob() throws FileNotFoundException {
+        DelimitedRecordMapper recordMapper = getRatingRecordMapper();
+        Job job = new JobBuilder().jmxMode(true).reader(new FlatFileRecordReader(new File(RATING_FILENAME))).mapper(recordMapper)
                 .validator(new BeanValidationRecordValidator<UserRating>()).processor(ratingLoadingProcessor).build();
-        return engine;
+        return job;
     }
 
-	public static DelimitedRecordMapper<UserRating> getRatingRecordMapper() {
-		DelimitedRecordMapper<UserRating> recordMapper = new DelimitedRecordMapper<UserRating>(UserRating.class,
-                new String[] { "userId", "itemId", "rating", "timestamp"});
+	public static DelimitedRecordMapper getRatingRecordMapper() {
+		DelimitedRecordMapper recordMapper = new DelimitedRecordMapper(UserRating.class, "userId", "itemId", "rating", "timestamp");
         recordMapper.setDelimiter("\\s");
         recordMapper.registerTypeConverter(new GenderTypeConverter());
         recordMapper.registerTypeConverter(new OccupationTypeConverter());

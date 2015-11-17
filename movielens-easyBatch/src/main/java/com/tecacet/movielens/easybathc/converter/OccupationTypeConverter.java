@@ -1,10 +1,10 @@
 package com.tecacet.movielens.easybathc.converter;
 
-import org.easybatch.core.api.TypeConverter;
+import org.easybatch.core.converter.TypeConverter;
 
 import com.tecacet.movielens.model.Occupation;
 
-public class OccupationTypeConverter implements TypeConverter<Occupation> {
+public class OccupationTypeConverter implements TypeConverter<String, Occupation> {
 
     @Override
     public Occupation convert(String occupation) {

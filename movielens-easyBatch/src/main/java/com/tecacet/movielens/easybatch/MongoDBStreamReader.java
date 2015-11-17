@@ -4,12 +4,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
-import org.easybatch.core.api.Header;
-import org.easybatch.core.api.Record;
-import org.easybatch.core.api.RecordReader;
-import org.easybatch.core.api.RecordReaderClosingException;
-import org.easybatch.core.api.RecordReaderOpeningException;
-import org.easybatch.core.api.RecordReadingException;
+import org.easybatch.core.record.Header;
+import org.easybatch.core.record.Record;
+import org.easybatch.core.reader.RecordReader;
+import org.easybatch.core.reader.RecordReaderClosingException;
+import org.easybatch.core.reader.RecordReaderOpeningException;
+import org.easybatch.core.reader.RecordReadingException;
 import org.easybatch.core.record.GenericRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 
