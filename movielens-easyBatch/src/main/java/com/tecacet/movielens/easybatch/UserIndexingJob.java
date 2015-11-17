@@ -2,9 +2,10 @@ package com.tecacet.movielens.easybatch;
 
 import java.io.File;
 
-import org.easybatch.core.api.Engine;
-import org.easybatch.core.api.Report;
-import org.easybatch.core.impl.EngineBuilder;
+import org.easybatch.core.job.Job;
+import org.easybatch.core.job.JobExecutor;
+import org.easybatch.core.job.JobReport;
+import org.easybatch.core.job.JobBuilder;
 import org.easybatch.flatfile.DelimitedRecordMapper;
 import org.easybatch.flatfile.FlatFileRecordReader;
 import org.easybatch.validation.BeanValidationRecordValidator;
@@ -20,24 +21,24 @@ public class UserIndexingJob {
     
     private final ElasticServer elasticServer = new ElasticServer();
     
-    public Report indexUsers() throws Exception {
+    public JobReport indexUsers() throws Exception {
         //start embedded elastic search node
         Node node = elasticServer.startEmbeddedNode();
         Client client = node.client();
         
-        DelimitedRecordMapper<User> recordMapper = new DelimitedRecordMapper<User>(User.class, new String[]{"id","age","gender","occupation","zipCode"});
+        DelimitedRecordMapper recordMapper = new DelimitedRecordMapper(User.class, "id","age","gender","occupation","zipCode");
         recordMapper.setDelimiter("|");
-        Engine engine = new EngineBuilder()
-        .enableJMX(true)
+        Job job = new JobBuilder()
+        .jmxMode(true)
         .reader(new FlatFileRecordReader(new File(USER_FILENAME)))
                 .mapper(recordMapper)
                 .validator(new BeanValidationRecordValidator<User>())
                  .processor(new MovieRatingProcessor())
                  .processor(new JsonTransformingProcessor())
                  .processor(new UserIndexerProcessor(client))
-                 .recordProcessorEventListener(new LoggingEventListener())
+                 .pipelineListener(new LoggingEventListener())
                 .build();
-        Report report = engine.call();
+        JobReport report = JobExecutor.execute(job);
         
         //shutdown elastic search node
         elasticServer.stopEmbeddedNode(node);

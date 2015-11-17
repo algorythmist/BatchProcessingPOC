@@ -1,7 +1,8 @@
 package com.tecacet.movielens.easybatch;
 
-import org.easybatch.core.api.RecordProcessingException;
-import org.easybatch.core.api.RecordProcessor;
+import org.easybatch.core.processor.RecordProcessingException;
+import org.easybatch.core.processor.RecordProcessor;
+import org.easybatch.core.record.Record;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +10,7 @@ import com.tecacet.movielens.model.Movie;
 import com.tecacet.movielens.repository.MovieRepository;
 
 @Component
-public class MovieLoadingProcessor implements RecordProcessor<Movie, Movie> {
+public class MovieLoadingProcessor implements RecordProcessor<Record<Movie>, Record<Movie>> {
 
     private final MovieRepository movieRepository;
 
@@ -20,9 +21,9 @@ public class MovieLoadingProcessor implements RecordProcessor<Movie, Movie> {
     }
 
     @Override
-    public Movie processRecord(Movie movie) throws RecordProcessingException {
-        movieRepository.save(movie);
-        return movie;
+    public Record<Movie> processRecord(Record<Movie> record) throws RecordProcessingException {
+        movieRepository.save(record.getPayload());
+        return record;
     }
 
 }

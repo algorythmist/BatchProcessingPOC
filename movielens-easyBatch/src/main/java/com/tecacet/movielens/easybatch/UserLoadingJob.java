@@ -3,9 +3,10 @@ package com.tecacet.movielens.easybatch;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import org.easybatch.core.api.Engine;
-import org.easybatch.core.api.Report;
-import org.easybatch.core.impl.EngineBuilder;
+import org.easybatch.core.job.Job;
+import org.easybatch.core.job.JobExecutor;
+import org.easybatch.core.job.JobReport;
+import org.easybatch.core.job.JobBuilder;
 import org.easybatch.flatfile.DelimitedRecordMapper;
 import org.easybatch.flatfile.FlatFileRecordReader;
 import org.easybatch.validation.BeanValidationRecordValidator;
@@ -29,21 +30,20 @@ public class UserLoadingJob {
         this.userLoadingProcessor = userLoadingProcessor;
     }
 
-    public Report readUsers() throws Exception {
+    public JobReport readUsers() throws Exception {
 
-        Engine engine = buildEngine();
-        return engine.call();
+        Job job = buildJob();
+        return JobExecutor.execute(job);
     }
 
-    private Engine buildEngine() throws FileNotFoundException {
-        DelimitedRecordMapper<User> recordMapper = new DelimitedRecordMapper<User>(User.class, new String[] { "id", "age", "gender", "occupation",
-                "zipCode" });
+    private Job buildJob() throws FileNotFoundException {
+        DelimitedRecordMapper recordMapper = new DelimitedRecordMapper(User.class, "id", "age", "gender", "occupation", "zipCode");
         recordMapper.setDelimiter("|");
         recordMapper.registerTypeConverter(new GenderTypeConverter());
         recordMapper.registerTypeConverter(new OccupationTypeConverter());
-        Engine engine = new EngineBuilder().enableJMX(true).reader(new FlatFileRecordReader(new File(USER_FILENAME))).mapper(recordMapper)
+        Job job = JobBuilder.aNewJob().jmxMode(true).reader(new FlatFileRecordReader(new File(USER_FILENAME))).mapper(recordMapper)
                 .validator(new BeanValidationRecordValidator<User>()).processor(userLoadingProcessor).build();
-        return engine;
+        return job;
     }
 
   

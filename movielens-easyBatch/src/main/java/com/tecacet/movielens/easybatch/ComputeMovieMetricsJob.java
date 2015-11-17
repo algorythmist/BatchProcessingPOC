@@ -3,10 +3,10 @@ package com.tecacet.movielens.easybatch;
 import java.io.FileNotFoundException;
 import java.util.Map;
 
-import org.easybatch.core.api.Engine;
-import org.easybatch.core.api.Report;
-import org.easybatch.core.impl.EngineBuilder;
-import org.easybatch.core.mapper.GenericRecordMapper;
+import org.easybatch.core.job.Job;
+import org.easybatch.core.job.JobExecutor;
+import org.easybatch.core.job.JobReport;
+import org.easybatch.core.job.JobBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -29,18 +29,22 @@ public class ComputeMovieMetricsJob {
 
     @SuppressWarnings("unchecked")
     public Map<Long, MovieMetrics> computeMetrics() throws Exception {
-        Engine engine = buildEngine();
-        Report report = engine.call();
-        return (Map<Long, MovieMetrics>) report.getBatchResult();
+        Job job = buildJob();
+        JobReport report = JobExecutor.execute(job);
+        return (Map<Long, MovieMetrics>) report.getResult();
     }
 
-    private Engine buildEngine() throws FileNotFoundException {
+    private Job buildJob() throws FileNotFoundException {
 
         MongoDBStreamReader reader = new MongoDBStreamReader(ratingRepository);
 
-        Engine engine = new EngineBuilder().enableJMX(true).reader(reader).mapper(new GenericRecordMapper()).processor(new MovieRatingProcessor())
+        Job job = new JobBuilder()
+                .jmxMode(true)
+                .reader(reader)
+                //.mapper(new GenericRecordMapper()) No need for this mapper anymore, all components now operate on Record (more consistent API and workflow)
+                .processor(new MovieRatingProcessor())
                 .build();
-        return engine;
+        return job;
     }
 
     public static void main(String[] args) throws Exception {

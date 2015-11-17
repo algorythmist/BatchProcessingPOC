@@ -1,10 +1,10 @@
 package com.tecacet.movielens.easybathc.converter;
 
-import org.easybatch.core.api.TypeConverter;
+import org.easybatch.core.converter.TypeConverter;
 
 import com.tecacet.movielens.model.Gender;
 
-public class GenderTypeConverter implements TypeConverter<Gender> {
+public class GenderTypeConverter implements TypeConverter<String, Gender> {
 
     @Override
     public Gender convert(String gender) {
