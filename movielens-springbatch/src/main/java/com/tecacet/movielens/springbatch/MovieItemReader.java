@@ -32,18 +32,12 @@ public class MovieItemReader extends FlatFileItemReader<Movie> {
 		lineTokenizer.setNames(properties);
 		lineTokenizer.setStrict(false);
 		setResource(new FileSystemResource(MOVIE_FILENAME));
-		setLineMapper(new DefaultLineMapper<Movie>() {
-			{
-
-				setLineTokenizer(lineTokenizer);
-				setFieldSetMapper(new BeanWrapperFieldSetMapper<Movie>() {
-					{
-						setTargetType(Movie.class);
-						setCustomEditors(customEditors);
-					}
-				});
-
-			}
-		});
+		DefaultLineMapper<Movie> lineMapper = new DefaultLineMapper<Movie>();
+		lineMapper.setLineTokenizer(lineTokenizer);
+		BeanWrapperFieldSetMapper<Movie> fieldSetMapper = new BeanWrapperFieldSetMapper<Movie>();
+		fieldSetMapper.setTargetType(Movie.class);
+		fieldSetMapper.setCustomEditors(customEditors);
+		lineMapper.setFieldSetMapper(fieldSetMapper);
+		setLineMapper(lineMapper);
 	}
 }

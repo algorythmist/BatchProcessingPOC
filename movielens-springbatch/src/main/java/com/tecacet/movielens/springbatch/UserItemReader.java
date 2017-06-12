@@ -23,32 +23,23 @@ import com.tecacet.movielens.springbatch.converter.OccupationPropertyEditor;
 public class UserItemReader extends FlatFileItemReader<User> {
 
 	private static final String USER_FILENAME = "../ml-100k/u.user";
-    private static final String[] FIELDS = new String[] { "id", "age", "gender", "occupation",
-    		"zipCode" };
+	private static final String[] FIELDS = new String[] { "id", "age", "gender", "occupation", "zipCode" };
 
-    public UserItemReader() {
+	public UserItemReader() {
 		Map<Class<?>, PropertyEditor> customEditors = new HashMap<>();
 		customEditors.put(Gender.class, new GenderPropertyEditor());
 		customEditors.put(Occupation.class, new OccupationPropertyEditor());
-		
-		DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer("|") {
-			{
-				setNames(FIELDS);
-			}
-		};
-		setResource(new FileSystemResource(USER_FILENAME));
-		setLineMapper(new DefaultLineMapper<User>() {
-			{
-				
-				setLineTokenizer(lineTokenizer);
-				setFieldSetMapper(new BeanWrapperFieldSetMapper<User>() {
-					{
-						setTargetType(User.class);
-						setCustomEditors(customEditors);
-					}
-				});
 
-			}
-		});
+		DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer("|");
+		lineTokenizer.setNames(FIELDS);
+
+		setResource(new FileSystemResource(USER_FILENAME));
+		DefaultLineMapper<User> lineMapper = new DefaultLineMapper<User>();
+		lineMapper.setLineTokenizer(lineTokenizer);
+		BeanWrapperFieldSetMapper<User> fieldSetMapper = new BeanWrapperFieldSetMapper<User>();
+		fieldSetMapper.setTargetType(User.class);
+		fieldSetMapper.setCustomEditors(customEditors);
+		lineMapper.setFieldSetMapper(fieldSetMapper);
+		setLineMapper(lineMapper);
 	}
 }

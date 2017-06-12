@@ -15,27 +15,18 @@ import com.tecacet.movielens.model.UserRating;
 public class RatingItemReader extends FlatFileItemReader<UserRating> {
 
 	private static final String RATINGS_FILENAME = "../ml-100k/u.data";
-    private static final String[] FIELDS = new String[] { "usedId", "itemId", "rating", "timestamp"};
+	private static final String[] FIELDS = new String[] { "usedId", "itemId", "rating", "timestamp" };
 
-    public RatingItemReader() {
-		RegexLineTokenizer lineTokenizer = new RegexLineTokenizer() {
-			{
-				setRegex("(.*)\\s+(.*)\\s+(.*)\\s+(.*)\\b");
-				setNames(FIELDS);
-			}
-		};
+	public RatingItemReader() {
+		RegexLineTokenizer lineTokenizer = new RegexLineTokenizer();
+		lineTokenizer.setRegex("(.*)\\s+(.*)\\s+(.*)\\s+(.*)\\b");
+		lineTokenizer.setNames(FIELDS);
 		setResource(new FileSystemResource(RATINGS_FILENAME));
-		setLineMapper(new DefaultLineMapper<UserRating>() {
-			{
-				
-				setLineTokenizer(lineTokenizer);
-				setFieldSetMapper(new BeanWrapperFieldSetMapper<UserRating>() {
-					{
-						setTargetType(UserRating.class);
-					}
-				});
-
-			}
-		});
+		DefaultLineMapper<UserRating> lineMapper = new DefaultLineMapper<UserRating>();
+		lineMapper.setLineTokenizer(lineTokenizer);
+		BeanWrapperFieldSetMapper<UserRating> fieldSetMapper = new BeanWrapperFieldSetMapper<UserRating>();
+		fieldSetMapper.setTargetType(UserRating.class);
+		lineMapper.setFieldSetMapper(fieldSetMapper);
+		setLineMapper(lineMapper);
 	}
 }
