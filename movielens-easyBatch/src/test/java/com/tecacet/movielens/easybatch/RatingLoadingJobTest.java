@@ -1,12 +1,13 @@
 package com.tecacet.movielens.easybatch;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.easybatch.core.job.JobReport;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -17,8 +18,6 @@ import com.tecacet.movielens.SpringConfig;
 import com.tecacet.movielens.model.UserRating;
 import com.tecacet.movielens.repository.UserRatingRepository;
 
-//TODO
-@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { SpringConfig.class, MongoConfig.class })
 public class RatingLoadingJobTest {
@@ -34,7 +33,7 @@ public class RatingLoadingJobTest {
 		JobReport jobReport = ratingLoadingJob.readRatings();
 		System.out.println(jobReport);
 		List<UserRating> ratings = userRatingRepository.findAll();
-		System.out.println(ratings);
+		assertEquals(100000, ratings.size());
 		userRatingRepository.delete(ratings);
 	}
 
