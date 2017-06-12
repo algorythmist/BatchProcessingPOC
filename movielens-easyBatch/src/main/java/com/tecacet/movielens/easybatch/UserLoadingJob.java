@@ -20,30 +20,31 @@ import com.tecacet.movielens.model.User;
 @Component
 public class UserLoadingJob {
 
-    private static final String USER_FILENAME = "../ml-100k/u.user";
+	private static final String USER_FILENAME = "../ml-100k/u.user";
 
-    private final UserLoadingProcessor userLoadingProcessor;
+	private final UserLoadingProcessor userLoadingProcessor;
 
-    @Autowired
-    public UserLoadingJob(UserLoadingProcessor userLoadingProcessor) {
-        super();
-        this.userLoadingProcessor = userLoadingProcessor;
-    }
+	@Autowired
+	public UserLoadingJob(UserLoadingProcessor userLoadingProcessor) {
+		super();
+		this.userLoadingProcessor = userLoadingProcessor;
+	}
 
-    public JobReport readUsers() throws IOException {
-        Job job = buildJob();
-        return JobExecutor.execute(job);
-    }
+	public JobReport readUsers() throws IOException {
+		Job job = buildJob();
+		return JobExecutor.execute(job);
+	}
 
-    private Job buildJob() throws IOException {
-        DelimitedRecordMapper recordMapper = new DelimitedRecordMapper(User.class, "id", "age", "gender", "occupation", "zipCode");
-        recordMapper.setDelimiter("|");
-        recordMapper.registerTypeConverter(new GenderTypeConverter());
-        recordMapper.registerTypeConverter(new OccupationTypeConverter());
-        Job job = JobBuilder.aNewJob().jmxMode(true).reader(new FlatFileRecordReader(new File(USER_FILENAME))).mapper(recordMapper)
-                .validator(new BeanValidationRecordValidator<User>()).processor(userLoadingProcessor).build();
-        return job;
-    }
+	private Job buildJob() throws IOException {
+		DelimitedRecordMapper recordMapper = new DelimitedRecordMapper(User.class, "id", "age", "gender", "occupation",
+				"zipCode");
+		recordMapper.setDelimiter("|");
+		recordMapper.registerTypeConverter(new GenderTypeConverter());
+		recordMapper.registerTypeConverter(new OccupationTypeConverter());
+		Job job = JobBuilder.aNewJob().jmxMode(true).reader(new FlatFileRecordReader(new File(USER_FILENAME)))
+				.mapper(recordMapper).validator(new BeanValidationRecordValidator<User>())
+				.processor(userLoadingProcessor).build();
+		return job;
+	}
 
-  
 }

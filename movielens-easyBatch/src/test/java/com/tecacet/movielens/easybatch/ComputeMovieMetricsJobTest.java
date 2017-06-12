@@ -1,7 +1,11 @@
 package com.tecacet.movielens.easybatch;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -23,14 +27,25 @@ public class ComputeMovieMetricsJobTest {
 	private ComputeMovieMetricsJob computeMovieMetricsJob;
 	
 	@Resource
+	private MovieLoadingJob movieLoadingJob;
+	
+	@Resource
 	private RatingLoadingJob ratingLoadingJob;
+	
+	@Resource
+	private MovieMetricsFileWriter fileWriter;
 
 	@Test
 	public void testComputeMetrics() throws Exception {
+		movieLoadingJob.readMovies();
 		JobReport jobReport = ratingLoadingJob.readRatings();
 		System.out.println(jobReport); //TODO
 		Map<Long, MovieMetrics> metrics = computeMovieMetricsJob.computeMetrics();
 		assertEquals(1682, metrics.size());
+		File file = fileWriter.writeMetrics(metrics);
+		List<String> lines = Files.readAllLines(Paths.get(file.getAbsolutePath()));
+		assertEquals(1683, lines.size());
+		file.delete();	
 	}
 
 }
