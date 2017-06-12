@@ -1,6 +1,6 @@
 package com.tecacet.movielens.repository;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Date;
 

@@ -16,7 +16,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.tecacet.movielens.MongoConfig;
 import com.tecacet.movielens.model.Movie;
 import com.tecacet.movielens.model.User;
+import com.tecacet.movielens.model.UserRating;
 import com.tecacet.movielens.repository.MovieRepository;
+import com.tecacet.movielens.repository.UserRatingRepository;
 import com.tecacet.movielens.repository.UserRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -31,6 +33,9 @@ public class DataLoaderTest {
 
 	@Resource
 	private UserRepository userRepository;
+
+	@Resource
+	private UserRatingRepository userRatingRepository;
 
 	@Test
 	public void testLoadMovies() throws Exception {
@@ -49,6 +54,20 @@ public class DataLoaderTest {
 		assertEquals(943, users.size());
 		userRepository.delete(users);
 	}
-	
+
+	@Test
+	public void testLoadRatings() throws Exception {
+		// clean up first
+		userRatingRepository.delete(userRatingRepository.findAll());
+
+		long startTime = System.currentTimeMillis();
+		JobExecution jobExecution = dataLoader.loadRatings();
+		long duration = System.currentTimeMillis() - startTime;
+		System.out.println("Time to load = " + duration);
+		assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
+		List<UserRating> ratings = userRatingRepository.findAll();
+		assertEquals(100000, ratings.size());
+		userRatingRepository.delete(ratings);
+	}
 
 }

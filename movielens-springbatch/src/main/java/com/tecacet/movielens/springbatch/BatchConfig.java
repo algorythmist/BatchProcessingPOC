@@ -89,7 +89,7 @@ public class BatchConfig {
 	@Bean(name = "importRatingStep")
 	public Step importRatingStep(StepBuilderFactory stepBuilderFactory, RatingItemReader reader,
 			ItemWriter<UserRating> writer, ItemProcessor<UserRating, UserRating> processor) {
-		return stepBuilderFactory.get("importRatingStep").<UserRating, UserRating>chunk(100).reader(reader)
+		return stepBuilderFactory.get("importRatingStep").<UserRating, UserRating>chunk(1000).reader(reader)
 				.processor(processor).writer(writer).build();
 	}
 
