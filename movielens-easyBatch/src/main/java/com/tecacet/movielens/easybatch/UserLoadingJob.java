@@ -1,12 +1,12 @@
 package com.tecacet.movielens.easybatch;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.easybatch.core.job.Job;
+import org.easybatch.core.job.JobBuilder;
 import org.easybatch.core.job.JobExecutor;
 import org.easybatch.core.job.JobReport;
-import org.easybatch.core.job.JobBuilder;
 import org.easybatch.flatfile.DelimitedRecordMapper;
 import org.easybatch.flatfile.FlatFileRecordReader;
 import org.easybatch.validation.BeanValidationRecordValidator;
@@ -30,13 +30,12 @@ public class UserLoadingJob {
         this.userLoadingProcessor = userLoadingProcessor;
     }
 
-    public JobReport readUsers() throws Exception {
-
+    public JobReport readUsers() throws IOException {
         Job job = buildJob();
         return JobExecutor.execute(job);
     }
 
-    private Job buildJob() throws FileNotFoundException {
+    private Job buildJob() throws IOException {
         DelimitedRecordMapper recordMapper = new DelimitedRecordMapper(User.class, "id", "age", "gender", "occupation", "zipCode");
         recordMapper.setDelimiter("|");
         recordMapper.registerTypeConverter(new GenderTypeConverter());

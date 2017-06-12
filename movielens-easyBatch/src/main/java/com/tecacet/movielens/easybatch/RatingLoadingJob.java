@@ -1,11 +1,11 @@
 package com.tecacet.movielens.easybatch;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.easybatch.core.job.Job;
-import org.easybatch.core.job.JobReport;
 import org.easybatch.core.job.JobBuilder;
+import org.easybatch.core.job.JobReport;
 import org.easybatch.flatfile.DelimitedRecordMapper;
 import org.easybatch.flatfile.FlatFileRecordReader;
 import org.easybatch.validation.BeanValidationRecordValidator;
@@ -19,36 +19,36 @@ import com.tecacet.movielens.model.UserRating;
 @Component
 public class RatingLoadingJob {
 
-    private static final String RATING_FILENAME = "../ml-100k/u.data";
+	private static final String RATING_FILENAME = "../ml-100k/u.data";
 
-    private final RatingLoadingProcessor ratingLoadingProcessor;
-    
-    @Autowired
-    public RatingLoadingJob(RatingLoadingProcessor ratingLoadingProcessor) {
-        super();
-        this.ratingLoadingProcessor = ratingLoadingProcessor;
-    }
+	private final RatingLoadingProcessor ratingLoadingProcessor;
 
-    public JobReport readRatings() throws Exception {
-        Job job = buildJob();
-        return job.call();
+	@Autowired
+	public RatingLoadingJob(RatingLoadingProcessor ratingLoadingProcessor) {
+		super();
+		this.ratingLoadingProcessor = ratingLoadingProcessor;
+	}
 
-    }
-  
-    private Job buildJob() throws FileNotFoundException {
-        DelimitedRecordMapper recordMapper = getRatingRecordMapper();
-        Job job = new JobBuilder().jmxMode(true).reader(new FlatFileRecordReader(new File(RATING_FILENAME))).mapper(recordMapper)
-                .validator(new BeanValidationRecordValidator<UserRating>()).processor(ratingLoadingProcessor).build();
-        return job;
-    }
+	public JobReport readRatings() throws IOException {
+		Job job = buildJob();
+		return job.call();
+	}
 
-	public static DelimitedRecordMapper getRatingRecordMapper() {
-		DelimitedRecordMapper recordMapper = new DelimitedRecordMapper(UserRating.class, "userId", "itemId", "rating", "timestamp");
-        recordMapper.setDelimiter("\\s");
-        recordMapper.registerTypeConverter(new GenderTypeConverter());
-        recordMapper.registerTypeConverter(new OccupationTypeConverter());
+	private Job buildJob() throws IOException {
+		DelimitedRecordMapper recordMapper = getRatingRecordMapper();
+		Job job = new JobBuilder().jmxMode(true).reader(new FlatFileRecordReader(new File(RATING_FILENAME)))
+				.mapper(recordMapper).validator(new BeanValidationRecordValidator<UserRating>())
+				.processor(ratingLoadingProcessor).build();
+		return job;
+	}
+
+	private static DelimitedRecordMapper getRatingRecordMapper() {
+		DelimitedRecordMapper recordMapper = new DelimitedRecordMapper(UserRating.class, "userId", "itemId", "rating",
+				"timestamp");
+		recordMapper.setDelimiter("\\s");
+		recordMapper.registerTypeConverter(new GenderTypeConverter());
+		recordMapper.registerTypeConverter(new OccupationTypeConverter());
 		return recordMapper;
 	}
 
- 
 }
