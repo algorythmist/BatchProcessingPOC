@@ -20,24 +20,21 @@ import com.tecacet.movielens.springbatch.converter.LocalDatePropertyEditor;
 @StepScope
 public class MovieItemReader extends FlatFileItemReader<Movie> {
 
-    private static final String MOVIE_FILENAME = "../ml-100k/u.item";
-    
-    private final String[] properties = 
-            new String[] { "id", "title", "releaseDate", "videoReleaseDate", "IMDBurl" };
-    
+	private static final String MOVIE_FILENAME = "../ml-100k/u.item";
+
+	private final String[] properties = new String[] { "id", "title", "releaseDate", "videoReleaseDate", "IMDBurl" };
+
 	public MovieItemReader() {
 		Map<Class<?>, PropertyEditor> customEditors = new HashMap<>();
 		customEditors.put(LocalDate.class, new LocalDatePropertyEditor());
-		
-		DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer("|") {
-			{
-				setNames(properties);
-			}
-		};
+
+		DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer("|");
+		lineTokenizer.setNames(properties);
+		lineTokenizer.setStrict(false);
 		setResource(new FileSystemResource(MOVIE_FILENAME));
 		setLineMapper(new DefaultLineMapper<Movie>() {
 			{
-				
+
 				setLineTokenizer(lineTokenizer);
 				setFieldSetMapper(new BeanWrapperFieldSetMapper<Movie>() {
 					{

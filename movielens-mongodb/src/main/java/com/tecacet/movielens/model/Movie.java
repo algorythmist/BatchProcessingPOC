@@ -4,8 +4,6 @@ import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -42,7 +40,6 @@ public class Movie {
     @NotEmpty
     private String title;
     
-    @NotNull
     private LocalDate releaseDate;
     
     private LocalDate videoReleaseDate;
@@ -103,6 +100,9 @@ public class Movie {
         this.genres = genres;
     }
     
-    
+    @Override
+    public String toString() {
+    	return title;
+    }
 
 }
