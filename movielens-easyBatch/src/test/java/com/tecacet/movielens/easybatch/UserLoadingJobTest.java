@@ -3,7 +3,6 @@ package com.tecacet.movielens.easybatch;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -15,7 +14,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.tecacet.movielens.MongoConfig;
 import com.tecacet.movielens.SpringConfig;
-import com.tecacet.movielens.model.User;
 import com.tecacet.movielens.repository.UserRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -28,14 +26,12 @@ public class UserLoadingJobTest {
 	@Resource
 	private UserRepository userRepository;
 
-	
 	@Test
 	public void test() throws IOException {
 		JobReport jobReport = userLoadingJob.readUsers();
 		System.out.println(jobReport);
-		List<User> users = userRepository.findAll();
-		assertEquals(943, users.size());
-		userRepository.delete(users);
+		assertEquals(943, userRepository.findAll());
+		userRepository.deleteAll();
 	}
 
 }

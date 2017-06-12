@@ -2,8 +2,6 @@ package com.tecacet.movielens.springbatch;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.junit.Test;
@@ -14,9 +12,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.tecacet.movielens.MongoConfig;
-import com.tecacet.movielens.model.Movie;
-import com.tecacet.movielens.model.User;
-import com.tecacet.movielens.model.UserRating;
 import com.tecacet.movielens.repository.MovieRepository;
 import com.tecacet.movielens.repository.UserRatingRepository;
 import com.tecacet.movielens.repository.UserRepository;
@@ -41,18 +36,16 @@ public class DataLoaderTest {
 	public void testLoadMovies() throws Exception {
 		JobExecution jobExecution = dataLoader.loadMovies();
 		assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
-		List<Movie> movies = movieRepository.findAll();
-		assertEquals(1682, movies.size());
-		movieRepository.delete(movies);
+		assertEquals(1682, movieRepository.count());
+		movieRepository.deleteAll();
 	}
 
 	@Test
 	public void testLoadUsers() throws Exception {
 		JobExecution jobExecution = dataLoader.loadUsers();
 		assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
-		List<User> users = userRepository.findAll();
-		assertEquals(943, users.size());
-		userRepository.delete(users);
+		assertEquals(943, userRepository.count());
+		userRepository.deleteAll();
 	}
 
 	@Test
@@ -65,9 +58,8 @@ public class DataLoaderTest {
 		long duration = System.currentTimeMillis() - startTime;
 		System.out.println("Time to load = " + duration);
 		assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
-		List<UserRating> ratings = userRatingRepository.findAll();
-		assertEquals(100000, ratings.size());
-		userRatingRepository.delete(ratings);
+		assertEquals(100000, userRatingRepository.count());
+		userRatingRepository.deleteAll();
 	}
 
 }
