@@ -1,6 +1,5 @@
 package com.tecacet.movielens.easybatch;
 
-import org.easybatch.core.processor.RecordProcessingException;
 import org.easybatch.core.processor.RecordProcessor;
 import org.easybatch.core.record.Record;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ public class UserLoadingProcessor implements RecordProcessor<Record<User>, Recor
 	}
 
 	@Override
-	public Record<User> processRecord(Record<User> record) throws RecordProcessingException {
+	public Record<User> processRecord(Record<User> record) {
 		userRepository.save(record.getPayload());
 		return record;
 	}

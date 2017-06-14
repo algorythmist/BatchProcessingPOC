@@ -3,19 +3,17 @@ package com.tecacet.movielens.easybatch;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.easybatch.core.processor.ComputationalRecordProcessor;
-import org.easybatch.core.processor.RecordProcessingException;
+import org.easybatch.core.processor.RecordProcessor;
 import org.easybatch.core.record.Record;
 
 import com.tecacet.movielens.model.UserRating;
 
-public class MovieRatingProcessor
-		implements ComputationalRecordProcessor<Record<UserRating>, Record<UserRating>, Map<Long, MovieMetrics>> {
+public class MovieRatingProcessor implements RecordProcessor<Record<UserRating>, Record<UserRating>> {
 
 	private Map<Long, MovieMetrics> metrics = new HashMap<>();
 
 	@Override
-	public Record<UserRating> processRecord(Record<UserRating> record) throws RecordProcessingException {
+	public Record<UserRating> processRecord(Record<UserRating> record) {
 		UserRating rating = record.getPayload();
 		MovieMetrics movieMetrics = metrics.get(rating.getItemId());
 		if (movieMetrics == null) {
@@ -26,9 +24,10 @@ public class MovieRatingProcessor
 		return record;
 	}
 
-	@Override
-	public Map<Long, MovieMetrics> getComputationResult() {
-		return metrics;
-	}
+	//TODO
+//	@Override
+//	public Map<Long, MovieMetrics> getComputationResult() {
+//		return metrics;
+//	}
 
 }

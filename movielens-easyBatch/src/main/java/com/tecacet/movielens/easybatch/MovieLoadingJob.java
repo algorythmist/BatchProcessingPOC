@@ -8,7 +8,6 @@ import org.easybatch.core.job.JobBuilder;
 import org.easybatch.core.job.JobExecutor;
 import org.easybatch.core.job.JobReport;
 import org.easybatch.core.mapper.RecordMapper;
-import org.easybatch.core.mapper.RecordMappingException;
 import org.easybatch.core.record.Record;
 import org.easybatch.core.record.StringRecord;
 import org.easybatch.flatfile.DelimitedRecordMapper;
@@ -26,10 +25,11 @@ public class MovieLoadingJob {
 	private static final String MOVIE_FILENAME = "../ml-100k/u.item";
 
 	private final MovieLoadingProcessor movieProcessor;
+	private final JobExecutor jobExecutor = new JobExecutor();
 
 	class DelegatingRecordMapper implements RecordMapper<StringRecord, Record<Movie>> {
 
-		private DelimitedRecordMapper recordMapper = new DelimitedRecordMapper(Movie.class,
+		private DelimitedRecordMapper<Movie> recordMapper = new DelimitedRecordMapper<>(Movie.class,
 				new Integer[] { 0, 1, 2, 3, 4 },
 				new String[] { "id", "title", "releaseDate", "videoReleaseDate", "IMDBurl" });
 
@@ -37,10 +37,9 @@ public class MovieLoadingJob {
 			recordMapper.setDelimiter("|");
 			recordMapper.registerTypeConverter(new LocalDateTypeConverter());
 		}
-
-		@SuppressWarnings("unchecked")
+		
 		@Override
-		public Record<Movie> processRecord(StringRecord record) throws RecordMappingException {
+		public Record<Movie> processRecord(StringRecord record) throws Exception {
 			Record<Movie> movieRecord = recordMapper.processRecord(record);
 			String[] tokens = record.getPayload().split("\\|");
 			for (int i = 5; i < 24; i++) {
@@ -61,15 +60,14 @@ public class MovieLoadingJob {
 
 	public JobReport readMovies() throws IOException {
 		Job job = buildJob();
-		return JobExecutor.execute(job);
+		return jobExecutor.execute(job);
 	}
 
 	private Job buildJob() throws IOException {
 		DelegatingRecordMapper recordMapper = new DelegatingRecordMapper();
-		Job job = JobBuilder.aNewJob().jmxMode(true).reader(new FlatFileRecordReader(new File(MOVIE_FILENAME)))
-				.mapper(recordMapper).validator(new BeanValidationRecordValidator<Movie>()).processor(movieProcessor)
-				.build();
-		return job;
+		FlatFileRecordReader flatFileRecordReader = new FlatFileRecordReader(new File(MOVIE_FILENAME));
+		return JobBuilder.aNewJob().enableJmx(true).reader(flatFileRecordReader)
+				.mapper(recordMapper).validator(new BeanValidationRecordValidator()).processor(movieProcessor).build();
 	}
 
 }

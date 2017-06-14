@@ -36,8 +36,8 @@ public class RatingLoadingJob {
 
 	private Job buildJob() throws IOException {
 		DelimitedRecordMapper recordMapper = getRatingRecordMapper();
-		return new JobBuilder().jmxMode(true).reader(new FlatFileRecordReader(new File(RATING_FILENAME)))
-				.mapper(recordMapper).validator(new BeanValidationRecordValidator<UserRating>())
+		return new JobBuilder().enableJmx(true).reader(new FlatFileRecordReader(new File(RATING_FILENAME)))
+				.mapper(recordMapper).validator(new BeanValidationRecordValidator())
 				.processor(ratingLoadingProcessor).build();
 	}
 

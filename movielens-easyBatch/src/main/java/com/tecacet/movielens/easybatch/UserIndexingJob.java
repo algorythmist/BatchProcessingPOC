@@ -20,6 +20,7 @@ public class UserIndexingJob {
 	private static final String USER_FILENAME = "../ml-100k/u.user";
 
 	private final ElasticServer elasticServer = new ElasticServer();
+	private final JobExecutor jobExecutor = new JobExecutor();
 
 	public JobReport indexUsers() throws Exception {
 		// start embedded elastic search node
@@ -29,11 +30,11 @@ public class UserIndexingJob {
 		DelimitedRecordMapper recordMapper = new DelimitedRecordMapper(User.class, "id", "age", "gender", "occupation",
 				"zipCode");
 		recordMapper.setDelimiter("|");
-		Job job = new JobBuilder().jmxMode(true).reader(new FlatFileRecordReader(new File(USER_FILENAME)))
-				.mapper(recordMapper).validator(new BeanValidationRecordValidator<User>())
+		Job job = new JobBuilder().enableJmx(true).reader(new FlatFileRecordReader(new File(USER_FILENAME)))
+				.mapper(recordMapper).validator(new BeanValidationRecordValidator())
 				.processor(new MovieRatingProcessor()).processor(new JsonTransformingProcessor())
 				.processor(new UserIndexerProcessor(client)).pipelineListener(new LoggingEventListener()).build();
-		JobReport report = JobExecutor.execute(job);
+		JobReport report = jobExecutor.execute(job);
 
 		// shutdown elastic search node
 		elasticServer.stopEmbeddedNode(node);

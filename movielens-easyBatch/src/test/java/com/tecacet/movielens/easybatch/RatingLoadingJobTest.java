@@ -28,9 +28,10 @@ public class RatingLoadingJobTest {
 
 	@Test
 	public void testReadRatings() throws IOException {
+		userRatingRepository.deleteAll();
 		JobReport jobReport = ratingLoadingJob.readRatings();
 		System.out.println(jobReport);
-		assertEquals(100000, userRatingRepository.count());
+		assertEquals(100000L, userRatingRepository.count());
 		userRatingRepository.deleteAll();
 
 	}

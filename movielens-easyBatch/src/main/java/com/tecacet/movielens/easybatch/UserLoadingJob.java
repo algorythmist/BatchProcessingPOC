@@ -23,6 +23,7 @@ public class UserLoadingJob {
 	private static final String USER_FILENAME = "../ml-100k/u.user";
 
 	private final UserLoadingProcessor userLoadingProcessor;
+	private final JobExecutor jobExecutor = new JobExecutor();
 
 	@Autowired
 	public UserLoadingJob(UserLoadingProcessor userLoadingProcessor) {
@@ -32,7 +33,7 @@ public class UserLoadingJob {
 
 	public JobReport readUsers() throws IOException {
 		Job job = buildJob();
-		return JobExecutor.execute(job);
+		return jobExecutor.execute(job);
 	}
 
 	private Job buildJob() throws IOException {
@@ -41,9 +42,9 @@ public class UserLoadingJob {
 		recordMapper.setDelimiter("|");
 		recordMapper.registerTypeConverter(new GenderTypeConverter());
 		recordMapper.registerTypeConverter(new OccupationTypeConverter());
-		Job job = JobBuilder.aNewJob().jmxMode(true).reader(new FlatFileRecordReader(new File(USER_FILENAME)))
-				.mapper(recordMapper).validator(new BeanValidationRecordValidator<User>())
-				.processor(userLoadingProcessor).build();
+		Job job = JobBuilder.aNewJob().enableJmx(true).reader(new FlatFileRecordReader(new File(USER_FILENAME)))
+				.mapper(recordMapper).validator(new BeanValidationRecordValidator()).processor(userLoadingProcessor)
+				.build();
 		return job;
 	}
 
