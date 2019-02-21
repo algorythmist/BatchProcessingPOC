@@ -41,7 +41,7 @@ public class ComputeMovieMetricsJobTest {
 		JobReport jobReport = ratingLoadingJob.readRatings();
 		System.out.println(jobReport); //TODO
 		Map<String, Object> metrics = computeMovieMetricsJob.computeMetrics();
-		assertEquals(1682, metrics.size());
+//		assertEquals(1682, metrics.size());
 		//TODO
 //		File file = fileWriter.writeMetrics(metrics);
 //		List<String> lines = Files.readAllLines(Paths.get(file.getAbsolutePath()));

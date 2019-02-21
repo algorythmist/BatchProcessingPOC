@@ -30,7 +30,7 @@ public class UserLoadingJobTest {
 	public void test() throws IOException {
 		JobReport jobReport = userLoadingJob.readUsers();
 		System.out.println(jobReport);
-		assertEquals(943, userRepository.findAll());
+		assertEquals(943, userRepository.findAll().size());
 		userRepository.deleteAll();
 	}
 

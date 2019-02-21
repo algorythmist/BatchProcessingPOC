@@ -10,6 +10,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
+import cz.jirutka.spring.embedmongo.EmbeddedMongoBuilder;
 
 @Configuration
 @ComponentScan
@@ -24,11 +25,16 @@ public class MongoConfig extends AbstractMongoConfiguration {
     @Override
     @Bean
     public Mongo mongo() throws Exception {
-        return new MongoClient("127.0.0.1");
+        //return new MongoClient("127.0.0.1");
+        return new EmbeddedMongoBuilder()
+                //.version("2.6.1")
+                .bindIp("127.0.0.1")
+                .port(12345)
+                .build();
     }
 
     @Bean
-    public MongoTemplate mongoTemplate(Mongo mongo) throws Exception {
+    public MongoTemplate mongoTemplate(Mongo mongo) {
         return new MongoTemplate(mongo, getDatabaseName());
     }
 
