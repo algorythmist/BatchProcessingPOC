@@ -8,6 +8,7 @@ import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
+import org.springframework.data.mongodb.core.mapping.event.BeforeSaveEvent;
 import org.springframework.stereotype.Component;
 
 import com.mongodb.DBObject;
@@ -25,8 +26,8 @@ public class PreSaveValidator<T> extends AbstractMongoEventListener<T>{
     }
 
     @Override
-    public void onBeforeSave(Object source, DBObject dbo) {
-        Set<ConstraintViolation<Object>> violations = validator.validate(source);
+    public void onBeforeSave(BeforeSaveEvent<T> event) {
+        Set<ConstraintViolation<Object>> violations = validator.validate(event.getSource());
         if (violations.size() > 0) {
             throw new ConstraintViolationException(violations);
         }
