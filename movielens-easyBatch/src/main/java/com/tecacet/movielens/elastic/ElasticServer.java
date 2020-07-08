@@ -1,11 +1,11 @@
 package com.tecacet.movielens.elastic;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
+
+import java.io.File;
+import java.io.IOException;
 
 public class ElasticServer {
     private static final String ES_DATA_DIRECTORY = "./es-data";
@@ -21,10 +21,10 @@ public class ElasticServer {
         node.close();
         deleteElasticSearchDataDirectory();
     }
-    
-    private void deleteElasticSearchDataDirectory() throws IOException {
+
+    private void deleteElasticSearchDataDirectory() {
         new File(ES_DATA_DIRECTORY).delete();
     }
 
-   
+
 }

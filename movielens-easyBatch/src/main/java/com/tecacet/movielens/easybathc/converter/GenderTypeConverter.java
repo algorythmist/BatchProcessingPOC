@@ -1,8 +1,8 @@
 package com.tecacet.movielens.easybathc.converter;
 
-import org.easybatch.core.converter.TypeConverter;
-
 import com.tecacet.movielens.model.Gender;
+
+import org.easybatch.core.converter.TypeConverter;
 
 public class GenderTypeConverter implements TypeConverter<String, Gender> {
 

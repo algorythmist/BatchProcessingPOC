@@ -1,8 +1,8 @@
 package com.tecacet.movielens.easybathc.converter;
 
-import org.easybatch.core.converter.TypeConverter;
-
 import com.tecacet.movielens.model.Occupation;
+
+import org.easybatch.core.converter.TypeConverter;
 
 public class OccupationTypeConverter implements TypeConverter<String, Occupation> {
 
