@@ -11,7 +11,7 @@
 
 	<properties>
 		<easybatch.version>5.3.0</easybatch.version>
-		<elasticsearch.version>1.7.6</elasticsearch.version>
+		<elasticsearch.version>6.8.13</elasticsearch.version>
 	</properties>
 
 	<dependencies>
